@@ -1,0 +1,10 @@
+[package]
+name = "rust-memory-game"
+version = "0.1.0"
+authors = ["Andrew Radev <andrey.radev@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ggez = { git = "https://github.com/ggez/ggez", rev = "ecedddd7291e3212168035ce9ca00d70d795707d" }
