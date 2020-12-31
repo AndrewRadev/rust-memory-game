@@ -12,14 +12,19 @@ use ggez::{
 use std::env;
 use std::path;
 
+use memory_game::entities::Card;
+
 #[derive(Debug)]
 struct MainState {
     conf: Conf,
+    card: Card,
 }
 
 impl MainState {
-    fn new(_ctx: &mut Context, conf: Conf) -> GameResult<MainState> {
-        Ok(MainState { conf })
+    fn new(ctx: &mut Context, conf: Conf) -> GameResult<MainState> {
+        let card = Card::load("/cards/card_hearts_J.png", ctx)?;
+
+        Ok(MainState { conf, card })
     }
 }
 
@@ -28,9 +33,9 @@ impl event::EventHandler for MainState {
         const DESIRED_FPS: u32 = 60;
 
         while timer::check_update_time(ctx, DESIRED_FPS) {
-            let _seconds = 1.0 / (DESIRED_FPS as f32);
+            let seconds = 1.0 / (DESIRED_FPS as f32);
 
-            // TODO
+            self.card.update(seconds);
         }
 
         Ok(())
@@ -39,6 +44,10 @@ impl event::EventHandler for MainState {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         let dark_blue = graphics::Color::from_rgb(26, 51, 77);
         graphics::clear(ctx, dark_blue);
+
+        // Draw a single card in the center:
+        self.card.draw(400.0, 300.0, ctx)?;
+
         graphics::present(ctx)?;
 
         Ok(())
@@ -48,8 +57,8 @@ impl event::EventHandler for MainState {
 fn main() {
     let conf = Conf::new().
         window_mode(WindowMode {
-            min_width: 1024.0,
-            min_height: 768.0,
+            width: 800.0,
+            height: 600.0,
             ..Default::default()
         });
     let (mut ctx, event_loop) = ContextBuilder::new("memory-game", "Andrew").

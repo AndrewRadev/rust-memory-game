@@ -1447,6 +1447,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "memory_game"
+version = "0.1.0"
+dependencies = [
+ "ggez",
+]
+
+[[package]]
 name = "minimp3"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2103,13 +2110,6 @@ dependencies = [
  "blake2b_simd",
  "constant_time_eq",
  "crossbeam-utils",
-]
-
-[[package]]
-name = "rust-memory-game"
-version = "0.1.0"
-dependencies = [
- "ggez",
 ]
 
 [[package]]
