@@ -49,6 +49,15 @@ impl Card {
         })
     }
 
+    /// Only starts flip animation if it's already done -- so it can be safely called multiple
+    /// times in a row.
+    ///
+    pub fn trigger_flip(&mut self) {
+        if self.animation.is_stopped() {
+            self.animation.reset();
+        }
+    }
+
     fn visible_image(&self) -> &graphics::Image {
         match self.state {
             CardState::Front => &self.image_front,
@@ -89,7 +98,7 @@ struct FlipAnimation {
     /// Number of seconds to animate in one direction
     duration: f32,
 
-    /// Progress of the animation 0..1
+    /// Progress of the animation: 0 <= progress <= duration
     progress: f32,
 
     /// Positive or negative change in direction: -1.0 or +1.0

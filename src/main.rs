@@ -6,6 +6,7 @@ use ggez::{
     event,
     filesystem,
     graphics,
+    input::mouse,
     timer,
 };
 
@@ -34,6 +35,10 @@ impl event::EventHandler for MainState {
 
         while timer::check_update_time(ctx, DESIRED_FPS) {
             let seconds = 1.0 / (DESIRED_FPS as f32);
+
+            if mouse::button_pressed(ctx, mouse::MouseButton::Left) {
+                self.card.trigger_flip();
+            }
 
             self.card.update(seconds);
         }
