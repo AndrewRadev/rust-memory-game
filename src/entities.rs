@@ -43,7 +43,7 @@ impl Card {
             offset: Point2 { x: 0.5, y: 0.5 },
             scale: Vector2 {
                 x: BASE_SCALE_X * self.animation.scale_x,
-                y: BASE_SCALE_Y * self.animation.scale_y,
+                y: BASE_SCALE_Y,
             },
             .. Default::default()
         })
@@ -65,9 +65,26 @@ impl Card {
 }
 
 #[derive(Debug)]
+pub enum FlipAnimationState {
+    Started,
+    Flipped,
+    Stopped,
+}
+
+impl FlipAnimationState {
+    fn advance(&mut self) {
+        match self {
+            Self::Started => *self = Self::Flipped,
+            Self::Flipped => *self = Self::Stopped,
+            Self::Stopped => (),
+        }
+    }
+}
+
+#[derive(Debug)]
 struct FlipAnimation {
     pub scale_x: f32,
-    pub scale_y: f32,
+    pub state: FlipAnimationState,
 
     /// Number of seconds to animate in one direction
     duration: f32,
@@ -81,27 +98,31 @@ struct FlipAnimation {
 
 impl FlipAnimation {
     fn new(duration: f32) -> Self {
-        let direction = 1.0;
-        let progress  = 0.0;
-        let scale_x   = 1.0;
-        let scale_y   = 1.0;
-
         FlipAnimation {
-            scale_x, scale_y,
-            duration, progress, direction,
+            scale_x: 1.0,
+            state: FlipAnimationState::Started,
+            progress: 0.0,
+            direction: 1.0,
+            duration,
         }
     }
 
     pub fn update(&mut self, seconds: f32) {
+        if matches!(self.state, FlipAnimationState::Stopped) {
+            return;
+        }
+
         self.progress += self.direction * seconds;
 
         // Flip conditions:
         if self.progress >= self.duration {
             self.progress = self.duration;
             self.direction = -1.0;
+            self.state.advance();
         } else if self.progress <= 0.0 {
             self.progress = 0.0;
             self.direction = 1.0;
+            self.state.advance();
         }
 
         self.scale_x = 1.0 - (self.progress / self.duration);
