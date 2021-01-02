@@ -3,7 +3,7 @@ use ggez::mint::{Point2, Vector2};
 
 const BASE_SCALE_X:  f32 = 1.5;
 const BASE_SCALE_Y:  f32 = 1.5;
-const FLIP_DURATION: f32 = 0.3;
+pub const FLIP_DURATION: f32 = 0.3;
 
 #[derive(Debug)]
 pub enum CardState {
@@ -13,20 +13,33 @@ pub enum CardState {
 
 #[derive(Debug)]
 pub struct Card {
-    image_front: graphics::Image,
-    image_back: graphics::Image,
-    state: CardState,
+    pub state: CardState,
+    identifier: String,
+    image_front: Option<graphics::Image>,
+    image_back: Option<graphics::Image>,
     animation: FlipAnimation,
 }
 
 impl Card {
-    pub fn load(path: &str, ctx: &mut Context) -> GameResult<Self> {
-        let image_front = graphics::Image::new(ctx, path)?;
-        let image_back  = graphics::Image::new(ctx, "/cards/card_back.png")?;
-        let state       = CardState::Front;
-        let animation   = FlipAnimation::new(FLIP_DURATION);
+    pub fn new(identifier: &str) -> Self {
+        Card {
+            identifier: String::from(identifier),
+            state:      CardState::Back,
+            animation:  FlipAnimation::new(FLIP_DURATION),
 
-        Ok(Card { image_front, image_back, state, animation })
+            // Images loaded later
+            image_front: None,
+            image_back: None,
+        }
+    }
+
+    pub fn load(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let path = format!("/cards/{}.png", self.identifier);
+
+        self.image_front = Some(graphics::Image::new(ctx, path)?);
+        self.image_back  = Some(graphics::Image::new(ctx, "/cards/card_back.png")?);
+
+        Ok(())
     }
 
     pub fn update(&mut self, seconds: f32) {
@@ -39,15 +52,19 @@ impl Card {
     }
 
     pub fn draw(&self, x: f32, y: f32, ctx: &mut Context) -> GameResult<()> {
-        graphics::draw(ctx, self.visible_image(), graphics::DrawParam {
-            dest: Point2 { x, y },
-            offset: Point2 { x: 0.5, y: 0.5 },
-            scale: Vector2 {
-                x: BASE_SCALE_X * self.animation.scale_x,
-                y: BASE_SCALE_Y,
-            },
-            .. Default::default()
-        })
+        if let Some(image) = self.visible_image() {
+            graphics::draw(ctx, image, graphics::DrawParam {
+                dest: Point2 { x, y },
+                offset: Point2 { x: 0.5, y: 0.5 },
+                scale: Vector2 {
+                    x: BASE_SCALE_X * self.animation.scale_x,
+                    y: BASE_SCALE_Y,
+                },
+                .. Default::default()
+            })?;
+        }
+
+        Ok(())
     }
 
     /// Only starts flip animation if it's already done -- so it can be safely called multiple
@@ -59,10 +76,10 @@ impl Card {
         }
     }
 
-    fn visible_image(&self) -> &graphics::Image {
+    fn visible_image(&self) -> Option<&graphics::Image> {
         match self.state {
-            CardState::Front => &self.image_front,
-            CardState::Back  => &self.image_back,
+            CardState::Front => self.image_front.as_ref(),
+            CardState::Back  => self.image_back.as_ref(),
         }
     }
 

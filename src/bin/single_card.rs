@@ -23,7 +23,8 @@ struct MainState {
 
 impl MainState {
     fn new(ctx: &mut Context, conf: Conf) -> GameResult<MainState> {
-        let card = Card::load("/cards/card_hearts_J.png", ctx)?;
+        let mut card = Card::new("card_hearts_J");
+        card.load(ctx)?;
 
         Ok(MainState { conf, card })
     }
