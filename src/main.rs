@@ -12,7 +12,7 @@ use ggez::{
 use std::env;
 use std::path;
 
-use memory_game::entities::Card;
+use memory_game::cards::Card;
 
 #[derive(Debug)]
 struct MainState {
