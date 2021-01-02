@@ -76,9 +76,16 @@ impl Card {
 
 #[derive(Debug)]
 pub enum FlipAnimationState {
+    /// The animation will play
     Started,
+
+    /// The animation is at the point where the card should be flipped
     BeforeFlip,
+
+    /// The card has (hopefully) been flipped now
     AfterFlip,
+
+    /// The animation is not playing
     Stopped,
 }
 
@@ -101,7 +108,7 @@ impl FlipAnimation {
     fn new(duration: f32) -> Self {
         FlipAnimation {
             scale_x: 1.0,
-            state: FlipAnimationState::Started,
+            state: FlipAnimationState::Stopped,
             progress: 0.0,
             direction: 1.0,
             duration,
