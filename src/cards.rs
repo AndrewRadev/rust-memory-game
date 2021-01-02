@@ -5,16 +5,16 @@ const BASE_SCALE_X:  f32 = 1.5;
 const BASE_SCALE_Y:  f32 = 1.5;
 pub const FLIP_DURATION: f32 = 0.3;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum CardState {
     Front,
     Back,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Card {
     pub state: CardState,
-    identifier: String,
+    pub identifier: String,
     image_front: Option<graphics::Image>,
     image_back: Option<graphics::Image>,
     animation: FlipAnimation,
@@ -91,7 +91,7 @@ impl Card {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum FlipAnimationState {
     /// The animation will play
     Started,
@@ -106,7 +106,7 @@ pub enum FlipAnimationState {
     Stopped,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct FlipAnimation {
     pub scale_x: f32,
     pub state: FlipAnimationState,
@@ -152,4 +152,65 @@ impl FlipAnimation {
 
         self.scale_x = 1.0 - (self.progress / self.duration);
     }
+}
+
+pub fn all() -> Vec<Card> {
+    vec![
+        Card::new("card_hearts_A"),
+        Card::new("card_hearts_02"),
+        Card::new("card_hearts_03"),
+        Card::new("card_hearts_04"),
+        Card::new("card_hearts_05"),
+        Card::new("card_hearts_06"),
+        Card::new("card_hearts_07"),
+        Card::new("card_hearts_08"),
+        Card::new("card_hearts_09"),
+        Card::new("card_hearts_10"),
+        Card::new("card_hearts_J"),
+        Card::new("card_hearts_Q"),
+        Card::new("card_hearts_K"),
+        Card::new("card_empty"),
+        Card::new("card_diamonds_A"),
+        Card::new("card_diamonds_02"),
+        Card::new("card_diamonds_03"),
+        Card::new("card_diamonds_04"),
+        Card::new("card_diamonds_05"),
+        Card::new("card_diamonds_06"),
+        Card::new("card_diamonds_07"),
+        Card::new("card_diamonds_08"),
+        Card::new("card_diamonds_09"),
+        Card::new("card_diamonds_10"),
+        Card::new("card_diamonds_J"),
+        Card::new("card_diamonds_Q"),
+        Card::new("card_diamonds_K"),
+        Card::new("card_back"),
+        Card::new("card_clubs_A"),
+        Card::new("card_clubs_02"),
+        Card::new("card_clubs_03"),
+        Card::new("card_clubs_04"),
+        Card::new("card_clubs_05"),
+        Card::new("card_clubs_06"),
+        Card::new("card_clubs_07"),
+        Card::new("card_clubs_08"),
+        Card::new("card_clubs_09"),
+        Card::new("card_clubs_10"),
+        Card::new("card_clubs_J"),
+        Card::new("card_clubs_Q"),
+        Card::new("card_clubs_K"),
+        Card::new("card_joker_red"),
+        Card::new("card_spades_A"),
+        Card::new("card_spades_02"),
+        Card::new("card_spades_03"),
+        Card::new("card_spades_04"),
+        Card::new("card_spades_05"),
+        Card::new("card_spades_06"),
+        Card::new("card_spades_07"),
+        Card::new("card_spades_08"),
+        Card::new("card_spades_09"),
+        Card::new("card_spades_10"),
+        Card::new("card_spades_J"),
+        Card::new("card_spades_Q"),
+        Card::new("card_spades_K"),
+        Card::new("card_joker_black"),
+    ]
 }
