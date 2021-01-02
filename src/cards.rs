@@ -127,8 +127,5 @@ impl FlipAnimation {
         }
 
         self.scale_x = 1.0 - (self.progress / self.duration);
-
-        // For an additional Y-axis effect:
-        // self.scale_y = 1.0 + (self.progress / self.duration) * 0.1;
     }
 }
