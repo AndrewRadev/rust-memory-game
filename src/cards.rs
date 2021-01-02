@@ -3,7 +3,7 @@ use ggez::mint::{Point2, Vector2};
 
 const BASE_SCALE_X:  f32 = 1.5;
 const BASE_SCALE_Y:  f32 = 1.5;
-const FLIP_DURATION: f32 = 1.0;
+const FLIP_DURATION: f32 = 0.3;
 
 #[derive(Debug)]
 pub enum CardState {
@@ -32,8 +32,9 @@ impl Card {
     pub fn update(&mut self, seconds: f32) {
         self.animation.update(seconds);
 
-        if self.animation.progress >= 1.0 {
+        if matches!(self.animation.state, FlipAnimationState::BeforeFlip) {
             self.flip();
+            self.animation.state = FlipAnimationState::AfterFlip;
         }
     }
 
@@ -53,8 +54,8 @@ impl Card {
     /// times in a row.
     ///
     pub fn trigger_flip(&mut self) {
-        if self.animation.is_stopped() {
-            self.animation.reset();
+        if matches!(self.animation.state, FlipAnimationState::Stopped) {
+            self.animation.state = FlipAnimationState::Started;
         }
     }
 
@@ -76,18 +77,9 @@ impl Card {
 #[derive(Debug)]
 pub enum FlipAnimationState {
     Started,
-    Flipped,
+    BeforeFlip,
+    AfterFlip,
     Stopped,
-}
-
-impl FlipAnimationState {
-    fn advance(&mut self) {
-        match self {
-            Self::Started => *self = Self::Flipped,
-            Self::Flipped => *self = Self::Stopped,
-            Self::Stopped => (),
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -127,11 +119,11 @@ impl FlipAnimation {
         if self.progress >= self.duration {
             self.progress = self.duration;
             self.direction = -1.0;
-            self.state.advance();
+            self.state = FlipAnimationState::BeforeFlip;
         } else if self.progress <= 0.0 {
             self.progress = 0.0;
             self.direction = 1.0;
-            self.state.advance();
+            self.state = FlipAnimationState::Stopped;
         }
 
         self.scale_x = 1.0 - (self.progress / self.duration);
