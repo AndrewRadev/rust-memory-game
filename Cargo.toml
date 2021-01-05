@@ -7,5 +7,5 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ggez = { git = "https://github.com/ggez/ggez", rev = "ecedddd7291e3212168035ce9ca00d70d795707d" }
+ggez = { git = "https://github.com/ggez/ggez", rev = "3183367f397aa46fade5912fe23b53ca68b55bb4" }
 rand = "0.8.0"

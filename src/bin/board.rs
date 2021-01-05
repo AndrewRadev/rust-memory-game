@@ -58,7 +58,7 @@ impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         const DESIRED_FPS: u32 = 60;
 
-        while timer::check_update_time(ctx, DESIRED_FPS) {
+        while timer::check_update_time(ctx, DESIRED_FPS)? {
             let seconds = 1.0 / (DESIRED_FPS as f32);
 
             self.board.update(seconds);
@@ -99,7 +99,7 @@ fn main() {
             ..Default::default()
         });
     let (mut ctx, event_loop) = ContextBuilder::new("memory-game", "Andrew").
-        conf(conf.clone()).
+        default_conf(conf.clone()).
         build().
         unwrap();
 
