@@ -1,6 +1,7 @@
 use ggez::{Context, GameResult};
 use std::collections::HashMap;
 use crate::cards::Card;
+use crate::debug;
 
 #[derive(Debug)]
 pub struct Board {
@@ -51,7 +52,17 @@ impl Board {
             let y = (*row as f32) * row_size + row_size / 2.0;
 
             card.draw(x, y, ctx)?;
+
+            if debug::is_active() {
+                use ggez::graphics::Rect;
+
+                let left = (*col as f32) * col_size;
+                let top  = (*row as f32) * row_size;
+
+                debug::draw_box(Rect::new(left, top, col_size, row_size), ctx).unwrap();
+            }
         }
+
 
         Ok(())
     }

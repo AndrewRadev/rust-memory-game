@@ -16,6 +16,10 @@ use std::path;
 
 use memory_game::board::Board;
 use memory_game::cards;
+use memory_game::debug;
+
+// TODO: Seems like I need to adjust for HiDPI??? Not great.
+const MOUSE_DPI_ADJUSTMENT: f32 = 1.71;
 
 #[derive(Debug)]
 struct MainState {
@@ -66,9 +70,8 @@ impl event::EventHandler for MainState {
             if mouse::button_pressed(ctx, mouse::MouseButton::Left) {
                 let mouse_position = mouse::position(ctx);
 
-                // TODO: Seems like I need to adjust for HiDPI??? Not great.
-                let x = mouse_position.x / 2.0;
-                let y = mouse_position.y / 2.0;
+                let x = mouse_position.x / MOUSE_DPI_ADJUSTMENT;
+                let y = mouse_position.y / MOUSE_DPI_ADJUSTMENT;
 
                 if let Some(card) = self.board.interact_with_card(x, y) {
                     card.trigger_flip();
@@ -84,6 +87,15 @@ impl event::EventHandler for MainState {
         graphics::clear(ctx, dark_blue);
 
         self.board.draw(ctx)?;
+
+        if debug::is_active() {
+            let mouse_position = mouse::position(ctx);
+
+            let x = mouse_position.x / MOUSE_DPI_ADJUSTMENT;
+            let y = mouse_position.y / MOUSE_DPI_ADJUSTMENT;
+
+            debug::draw_circle(x, y, ctx).unwrap();
+        }
 
         graphics::present(ctx)?;
 
