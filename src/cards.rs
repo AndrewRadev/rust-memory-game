@@ -53,15 +53,14 @@ impl Card {
 
     pub fn draw(&self, x: f32, y: f32, ctx: &mut Context) -> GameResult<()> {
         if let Some(image) = self.visible_image() {
-            graphics::draw(ctx, image, graphics::DrawParam {
-                dest: Point2 { x, y },
-                offset: Point2 { x: 0.5, y: 0.5 },
-                scale: Vector2 {
+            let draw_params = graphics::DrawParam::default().
+                dest(Point2 { x, y }).
+                offset(Point2 { x: 0.5, y: 0.5 }).
+                scale(Vector2 {
                     x: BASE_SCALE_X * self.animation.scale_x,
                     y: BASE_SCALE_Y,
-                },
-                .. Default::default()
-            })?;
+                });
+            graphics::draw(ctx, image, draw_params)?;
         }
 
         Ok(())

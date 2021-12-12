@@ -19,11 +19,10 @@ use memory_game::cards;
 use memory_game::debug;
 
 // TODO: Seems like I need to adjust for HiDPI??? Not great.
-const MOUSE_DPI_ADJUSTMENT: f32 = 1.71;
+// const MOUSE_DPI_ADJUSTMENT: f32 = 1.71;
 
 #[derive(Debug)]
 struct MainState {
-    conf: Conf,
     board: Board,
 }
 
@@ -54,7 +53,7 @@ impl MainState {
             board.set_card(second_coordinate.1, second_coordinate.0, card);
         }
 
-        Ok(MainState { conf, board })
+        Ok(MainState { board })
     }
 }
 
@@ -62,7 +61,7 @@ impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         const DESIRED_FPS: u32 = 60;
 
-        while timer::check_update_time(ctx, DESIRED_FPS)? {
+        while timer::check_update_time(ctx, DESIRED_FPS) {
             let seconds = 1.0 / (DESIRED_FPS as f32);
 
             self.board.update(seconds);
@@ -70,8 +69,8 @@ impl event::EventHandler for MainState {
             if mouse::button_pressed(ctx, mouse::MouseButton::Left) {
                 let mouse_position = mouse::position(ctx);
 
-                let x = mouse_position.x / MOUSE_DPI_ADJUSTMENT;
-                let y = mouse_position.y / MOUSE_DPI_ADJUSTMENT;
+                let x = mouse_position.x;
+                let y = mouse_position.y;
 
                 if let Some(card) = self.board.interact_with_card(x, y) {
                     card.trigger_flip();
@@ -91,8 +90,8 @@ impl event::EventHandler for MainState {
         if debug::is_active() {
             let mouse_position = mouse::position(ctx);
 
-            let x = mouse_position.x / MOUSE_DPI_ADJUSTMENT;
-            let y = mouse_position.y / MOUSE_DPI_ADJUSTMENT;
+            let x = mouse_position.x;
+            let y = mouse_position.y;
 
             debug::draw_circle(x, y, ctx).unwrap();
         }

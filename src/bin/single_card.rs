@@ -17,16 +17,15 @@ use memory_game::cards::Card;
 
 #[derive(Debug)]
 struct MainState {
-    conf: Conf,
     card: Card,
 }
 
 impl MainState {
-    fn new(ctx: &mut Context, conf: Conf) -> GameResult<MainState> {
+    fn new(ctx: &mut Context) -> GameResult<MainState> {
         let mut card = Card::new("card_hearts_J");
         card.load(ctx)?;
 
-        Ok(MainState { conf, card })
+        Ok(MainState { card })
     }
 }
 
@@ -34,7 +33,7 @@ impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         const DESIRED_FPS: u32 = 60;
 
-        while timer::check_update_time(ctx, DESIRED_FPS)? {
+        while timer::check_update_time(ctx, DESIRED_FPS) {
             let seconds = 1.0 / (DESIRED_FPS as f32);
 
             if mouse::button_pressed(ctx, mouse::MouseButton::Left) {
@@ -80,7 +79,7 @@ fn main() {
         filesystem::mount(&mut ctx, &path, true);
     }
 
-    let state = MainState::new(&mut ctx, conf.clone()).unwrap();
+    let state = MainState::new(&mut ctx).unwrap();
 
     event::run(ctx, event_loop, state);
 }
