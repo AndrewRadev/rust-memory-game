@@ -1,8 +1,8 @@
 use ggez::{Context, GameResult, graphics};
 use ggez::mint::{Point2, Vector2};
 
-const BASE_SCALE_X:  f32 = 1.5;
-const BASE_SCALE_Y:  f32 = 1.5;
+const BASE_SCALE_X: f32 = 2.5;
+const BASE_SCALE_Y: f32 = 2.5;
 pub const FLIP_DURATION: f32 = 0.3;
 
 #[derive(Debug, Clone)]
