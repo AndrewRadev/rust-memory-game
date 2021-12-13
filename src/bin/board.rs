@@ -18,9 +18,6 @@ use memory_game::board::Board;
 use memory_game::cards;
 use memory_game::debug;
 
-// TODO: Seems like I need to adjust for HiDPI??? Not great.
-// const MOUSE_DPI_ADJUSTMENT: f32 = 1.71;
-
 #[derive(Debug)]
 struct MainState {
     board: Board,
