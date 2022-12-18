@@ -15,6 +15,7 @@ pub enum CardState {
 pub struct Card {
     pub state: CardState,
     pub identifier: String,
+
     image_front: Option<graphics::Image>,
     image_back: Option<graphics::Image>,
     animation: FlipAnimation,
@@ -36,8 +37,8 @@ impl Card {
     pub fn load(&mut self, ctx: &mut Context) -> GameResult<()> {
         let path = format!("/cards/{}.png", self.identifier);
 
-        self.image_front = Some(graphics::Image::new(ctx, path)?);
-        self.image_back  = Some(graphics::Image::new(ctx, "/cards/card_back.png")?);
+        self.image_front = Some(graphics::Image::from_path(ctx, path)?);
+        self.image_back  = Some(graphics::Image::from_path(ctx, "/cards/card_back.png")?);
 
         Ok(())
     }
@@ -51,19 +52,19 @@ impl Card {
         }
     }
 
-    pub fn draw(&self, x: f32, y: f32, ctx: &mut Context) -> GameResult<()> {
-        if let Some(image) = self.visible_image() {
-            let draw_params = graphics::DrawParam::default().
-                dest(Point2 { x, y }).
-                offset(Point2 { x: 0.5, y: 0.5 }).
-                scale(Vector2 {
-                    x: BASE_SCALE_X * self.animation.scale_x,
-                    y: BASE_SCALE_Y,
-                });
-            graphics::draw(ctx, image, draw_params)?;
-        }
+    pub fn draw(&self, x: f32, y: f32, canvas: &mut graphics::Canvas) {
+        let Some(image) = self.visible_image() else {
+            return;
+        };
 
-        Ok(())
+        let draw_params = graphics::DrawParam::default().
+            dest(Point2 { x, y }).
+            offset(Point2 { x: 0.5, y: 0.5 }).
+            scale(Vector2 {
+                x: BASE_SCALE_X * self.animation.scale_x,
+                y: BASE_SCALE_Y,
+            });
+        canvas.draw(image, draw_params);
     }
 
     /// Only starts flip animation if it's already done -- so it can be safely called multiple

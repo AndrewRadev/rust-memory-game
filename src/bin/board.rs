@@ -4,10 +4,8 @@ use ggez::{
     GameResult,
     conf::{Conf, WindowMode},
     event,
-    filesystem,
     graphics,
     input::mouse,
-    timer,
 };
 use rand::seq::SliceRandom;
 
@@ -58,13 +56,13 @@ impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         const DESIRED_FPS: u32 = 60;
 
-        while timer::check_update_time(ctx, DESIRED_FPS) {
-            let seconds = 1.0 / (DESIRED_FPS as f32);
+        while ctx.time.check_update_time(DESIRED_FPS) {
+            let seconds = ctx.time.delta().as_secs_f32();
 
             self.board.update(seconds);
 
-            if mouse::button_pressed(ctx, mouse::MouseButton::Left) {
-                let mouse_position = mouse::position(ctx);
+            if ctx.mouse.button_pressed(mouse::MouseButton::Left) {
+                let mouse_position = ctx.mouse.position();
 
                 let x = mouse_position.x;
                 let y = mouse_position.y;
@@ -80,21 +78,20 @@ impl event::EventHandler for MainState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         let dark_blue = graphics::Color::from_rgb(26, 51, 77);
-        graphics::clear(ctx, dark_blue);
+        let mut canvas = graphics::Canvas::from_frame(ctx, dark_blue);
 
-        self.board.draw(ctx)?;
+        self.board.draw(&mut canvas, ctx)?;
 
         if debug::is_active() {
-            let mouse_position = mouse::position(ctx);
+            let mouse_position = ctx.mouse.position();
 
             let x = mouse_position.x;
             let y = mouse_position.y;
 
-            debug::draw_circle(x, y, ctx).unwrap();
+            debug::draw_circle(x, y, &mut canvas, ctx);
         }
 
-        graphics::present(ctx)?;
-
+        canvas.finish(ctx)?;
         Ok(())
     }
 }
@@ -116,7 +113,7 @@ fn main() {
     if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
         let mut path = path::PathBuf::from(manifest_dir);
         path.push("resources");
-        filesystem::mount(&mut ctx, &path, true);
+        ctx.fs.mount(&path, true);
     }
 
     let state = MainState::new(&mut ctx, conf.clone()).unwrap();

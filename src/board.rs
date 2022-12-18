@@ -1,4 +1,4 @@
-use ggez::{Context, GameResult};
+use ggez::{graphics, Context, GameResult};
 use std::collections::HashMap;
 use crate::cards::Card;
 use crate::debug;
@@ -43,23 +43,23 @@ impl Board {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) -> GameResult<()> {
+    pub fn draw(&self, canvas: &mut graphics::Canvas, ctx: &mut Context) -> GameResult<()> {
         let row_size = self.height / (self.row_count as f32);
         let col_size = self.width / (self.col_count as f32);
 
-        for ((row, col), card) in self.cards.iter() {
-            let x = (*col as f32) * col_size + col_size / 2.0;
-            let y = (*row as f32) * row_size + row_size / 2.0;
+        for (&(row, col), card) in self.cards.iter() {
+            let x = (col as f32) * col_size + col_size / 2.0;
+            let y = (row as f32) * row_size + row_size / 2.0;
 
-            card.draw(x, y, ctx)?;
+            card.draw(x, y, canvas);
 
             if debug::is_active() {
                 use ggez::graphics::Rect;
 
-                let left = (*col as f32) * col_size;
-                let top  = (*row as f32) * row_size;
+                let left = (col as f32) * col_size;
+                let top  = (row as f32) * row_size;
 
-                debug::draw_box(Rect::new(left, top, col_size, row_size), ctx).unwrap();
+                debug::draw_box(Rect::new(left, top, col_size, row_size), canvas, ctx).unwrap();
             }
         }
 
